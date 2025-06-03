@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management ET & Wicca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0066cc;
+            --dark-blue: #0d1b2a;
+            --light-blue: #1e90ff;
+            --accent-blue: #4da6ff;
+            --white: #ffffff;
+            --light-gray: #f0f4f8;
+            --medium-gray: #d0d7de;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--dark-blue), #162b47);
+            color: var(--white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-button {
+            position: relative;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background-color: var(--accent-blue);
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+        
+        .nav-button:hover::before {
+            width: 100%;
+        }
+        
+        .nav-button.active {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            font-weight: 600;
+        }
+        
+        .nav-button.active::before {
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-blue);
+        }
+        
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .action-button {
+            background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+            border-radius: 0.375rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 144, 255, 0.4);
+        }
+        
+        .action-button:active {
+            transform: translateY(1px);
+        }
+        
+        .section-title {
+            color: var(--light-blue);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--accent-blue);
+        }
+        
+        .form-input {
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(77, 166, 255, 0.3);
+            outline: none;
+        }
+        
+        .custom-checkbox {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+        
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .custom-checkbox:hover input ~ .checkmark {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        .custom-checkbox input:checked ~ .checkmark {
+            background-color: var(--primary-blue);
+        }
+        
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+        
+        .custom-checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+        
+        .custom-checkbox .checkmark:after {
+            left: 7px;
+            top: 3px;
+            width: 6px;
+            height: 11px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--dark-blue), #162b47);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 400px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-app {
+            display: none;
+        }
+
+        .main-app.active {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .table-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+            }
+            
+            .nav-button {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+            
+            .form-input {
+                width: 100%;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .login-card {
+                width: 90%;
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Container -->
+    <div id="loginContainer" class="login-container">
+        <div class="login-card">
+            <div class="text-center mb-8">
+                <div class="bg-white p-3 rounded-full mx-auto w-16 h-16 flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">Asset Management</h2>
+                <p class="text-blue-300">ET & Wicca</p>
+            </div>
+            
+            <div id="errorMessage" class="error-message">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span id="errorText">Usuário ou senha inválidos!</span>
+            </div>
+            
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label for="username" class="block mb-2 text-sm font-medium text-blue-300">Usuário</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-gray-400"></i>
+                        </div>
+                        <input type="text" id="username" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Digite seu usuário" required>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="password" class="block mb-2 text-sm font-medium text-blue-300">Senha</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Digite sua senha" required>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <label class="custom-checkbox">
+                        <input type="checkbox" id="remember">
+                        <span class="checkmark"></span>
+                        <span class="ml-2 text-blue-100 text-sm">Lembrar-me</span>
+                    </label>
+                    <a href="#" class="text-blue-300 text-sm hover:text-white transition-colors">Esqueceu a senha?</a>
+                </div>
+                
+                <button type="submit" class="action-button w-full px-6 py-3 text-white font-medium rounded-lg flex items-center justify-center">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Entrar
+                </button>
+                
+                <div class="text-center">
+                    <p class="text-blue-300 text-sm">Usuários de teste:</p>
+                    <p class="text-white text-xs">admin/admin123 ou user/user123</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="main-app">
+        <header class="bg-gradient-to-r from-blue-900 to-blue-800 p-6 text-center shadow-lg">
+            <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="bg-white p-2 rounded-full mr-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+                        </svg>
+                    </div>
+                    <h1 class="text-3xl font-bold text-white">Asset Management <span class="text-blue-300">ET & Wicca</span></h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="hidden md:flex items-center bg-blue-800 bg-opacity-50 px-4 py-2 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-300 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span class="text-blue-100">Última atualização: <span class="text-white font-medium" id="current-date">Carregando...</span></span>
+                    </div>
+                    <div class="flex items-center bg-blue-800 bg-opacity-50 px-3 py-2 rounded-full">
+                        <i class="fas fa-user text-blue-300 mr-2"></i>
+                        <span class="text-white text-sm" id="currentUser">Usuário</span>
+                    </div>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 transition-colors p-2 rounded-full cursor-pointer" title="Sair">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <nav class="bg-blue-800 bg-opacity-30 backdrop-blur-md p-4 sticky top-0 z-10 shadow-md">
+            <div class="container mx-auto">
+                <div class="nav-container flex flex-wrap justify-center gap-2">
+                    <button onclick="mostrarSecao('home')" class="nav-button active px-6 py-3 text-white rounded-md flex items-center">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </button>
+                    <button onclick="mostrarSecao('hardware')" class="nav-button px-6 py-3 text-white rounded-md flex items-center">
+                        <i class="fas fa-laptop mr-2"></i>Hardware
+                    </button>
+                    <button onclick="mostrarSecao('software')" class="nav-button px-6 py-3 text-white rounded-md flex items-center">
+                        <i class="fas fa-code mr-2"></i>Software
+                    </button>
+                    <button onclick="mostrarSecao('rede')" class="nav-button px-6 py-3 text-white rounded-md flex items-center">
+                        <i class="fas fa-network-wired mr-2"></i>Rede
+                    </button>
+                    <button onclick="mostrarSecao('banco')" class="nav-button px-6 py-3 text-white rounded-md flex items-center">
+                        <i class="fas fa-database mr-2"></i>Banco de Dados
+                    </button>
+                    <button onclick="mostrarSecao('inventario')" class="nav-button px-6 py-3 text-white rounded-md flex items-center">
+                        <i class="fas fa-clipboard-list mr-2"></i>Inventário
+                    </button>
+                </div>
+            </div>
+        </nav>
+        
+        <main class="flex-grow p-6">
+            <div class="container mx-auto">
+                <!-- Home Section -->
+                <section id="home" class="section active">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold mb-4 text-white">Controle de Ativos da ET & Wicca</h2>
+                        <div class="h-1 w-24 bg-blue-500 mx-auto mb-6"></div>
+                        <h3 class="text-xl font-semibold mb-6 text-blue-300">Sistema interno para gerenciamento e rastreamento de ativos de TI</h3>
+                    </div>
+                    
+                    <!-- Dashboard Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 stats-grid">
+                        <div class="stat-card flex items-center">
+                            <div class="p-3 rounded-full bg-blue-600 bg-opacity-30 mr-4">
+                                <i class="fas fa-laptop text-blue-300 text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-blue-300 text-sm">Total Hardware</p>
+                                <p class="text-2xl font-bold text-white" id="totalHardware">3</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card flex items-center">
+                            <div class="p-3 rounded-full bg-blue-600 bg-opacity-30 mr-4">
+                                <i class="fas fa-code text-blue-300 text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-blue-300 text-sm">Total Software</p>
+                                <p class="text-2xl font-bold text-white" id="totalSoftware">3</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card flex items-center">
+                            <div class="p-3 rounded-full bg-blue-600 bg-opacity-30 mr-4">
+                                <i class="fas fa-network-wired text-blue-300 text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-blue-300 text-sm">Redes Ativas</p>
+                                <p class="text-2xl font-bold text-white" id="totalRede">3</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card flex items-center">
+                            <div class="p-3 rounded-full bg-blue-600 bg-opacity-30 mr-4">
+                                <i class="fas fa-database text-blue-300 text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-blue-300 text-sm">Bancos de Dados</p>
+                                <p class="text-2xl font-bold text-white" id="totalBanco">3</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                        <div class="glass-effect rounded-xl p-6 card">
+                            <div class="flex items-center mb-4">
+                                <div class="p-2 rounded-full bg-blue-600 bg-opacity-30 mr-3">
+                                    <i class="fas fa-bullseye text-blue-300"></i>
+                                </div>
+                                <h3 class="section-title text-xl font-semibold">Objetivo</h3>
+                            </div>
+                            <p class="text-gray-200 leading-relaxed">O sistema oferece um ambiente seguro, centralizado e eficiente para controle de ativos tecnológicos da empresa, incluindo hardware, software, infraestrutura de rede e banco de dados. Através desta plataforma, todos os recursos podem ser facilmente monitorados e gerenciados.</p>
+                        </div>
+                        
+                        <div class="glass-effect rounded-xl p-6 card">
+                            <div class="flex items-center mb-4">
+                                <div class="p-2 rounded-full bg-blue-600 bg-opacity-30 mr-3">
+                                    <i class="fas fa-tools text-blue-300"></i>
+                                </div>
+                                <h3 class="section-title text-xl font-semibold">Funcionalidades disponíveis</h3>
+                            </div>
+                            <ul class="space-y-2 text-gray-200">
+                                <li class="flex items-start">
+                                    <svg class="h-5 w-5 text-blue-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Visualização segura dos ativos de TI da empresa
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="h-5 w-5 text-blue-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Cadastro e controle de inventário completo
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="h-5 w-5 text-blue-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Busca por nome, tipo, status ou responsável
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="h-5 w-5 text-blue-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Sistema de login e controle de acesso
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="glass-effect rounded-xl p-6 card">
+                            <div class="flex items-center mb-4">
+                                <div class="p-2 rounded-full bg-blue-600 bg-opacity-30 mr-3">
+                                    <i class="fas fa-user-shield text-blue-300"></i>
+                                </div>
+                                <h3 class="section-title text-xl font-semibold">Responsabilidades do usuário</h3>
+                            </div>
+                            <ul class="space-y-2 text-gray-200">
+                                <li class="flex items-start">
+                                    <svg class="h-5 w-5 text-blue-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Manter cadastros atualizados
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="h-5 w-5 text-blue-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Reportar inconsistências ao time de TI
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="h-5 w-5 text-blue-400 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Garantir integridade das informações
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="glass-effect rounded-xl p-6 card">
+                            <div class="flex items-center mb-4">
+                                <div class="p-2 rounded-full bg-blue-600 bg-opacity-30 mr-3">
+                                    <i class="fas fa-shield-alt text-blue-300"></i>
+                                </div>
+                                <h3 class="section-title text-xl font-semibold">Segurança e Governança</h3>
+                            </div>
+                            <p class="text-gray-200 leading-relaxed">Todas as informações contidas neste sistema são protegidas por políticas de segurança e passam por auditorias periódicas para garantir sua integridade e confidencialidade. O acesso é controlado e monitorado conforme as diretrizes de segurança da informação da ET & Wicca.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Inventário Section -->
+                <section id="inventario" class="section">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold mb-4 text-white">Inventário Geral de Ativos</h2>
+                        <div class="h-1 w-24 bg-blue-500 mx-auto"></div>
+                    </div>
+                    
+                    <!-- Filtros -->
+                    <div class="glass-effect rounded-xl p-6 mb-8">
+                        <h3 class="text-xl font-semibold text-blue-300 mb-4">Filtros de Busca</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-blue-300">Tipo de Ativo</label>
+                                <select id="filtroTipo" class="form-input bg-blue-900 bg-opacity-30 text-white px-3 py-2 rounded-lg w-full">
+                                    <option value="">Todos</option>
+                                    <option value="hardware">Hardware</option>
+                                    <option value="software">Software</option>
+                                    <option value="rede">Rede</option>
+                                    <option value="banco">Banco de Dados</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-blue-300">Status</label>
+                                <select id="filtroStatus" class="form-input bg-blue-900 bg-opacity-30 text-white px-3 py-2 rounded-lg w-full">
+                                    <option value="">Todos</option>
+                                    <option value="ativo">Ativo</option>
+                                    <option value="inativo">Inativo</option>
+                                    <option value="manutencao">Manutenção</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block mb-2 text-sm font-medium text-blue-300">Responsável</label>
+                                <input type="text" id="filtroResponsavel" class="form-input bg-blue-900 bg-opacity-30 text-white px-3 py-2 rounded-lg w-full" placeholder="Nome do responsável">
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="filtrarInventario()" class="action-button px-6 py-2 text-white font-medium rounded-lg flex items-center w-full justify-center">
+                                    <i class="fas fa-search mr-2"></i> Filtrar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabela de Inventário -->
+                    <div class="glass-effect rounded-xl p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-semibold text-blue-300">Todos os Ativos</h3>
+                            <div class="flex space-x-2">
+                                <button onclick="exportarInventario()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md flex items-center text-sm transition-colors">
+                                    <i class="fas fa-download mr-2"></i> Exportar
+                                </button>
+                                <button onclick="atualizarInventario()" class="bg-transparent border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-4 py-2 rounded-md flex items-center text-sm transition-colors">
+                                    <i class="fas fa-sync-alt mr-2"></i> Atualizar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="table-container overflow-x-auto">
+                            <table class="min-w-full divide-y divide-blue-800" id="inventarioTable">
+                                <thead>
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Tipo</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Nome</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Modelo/Versão</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Responsável</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Localização</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-blue-800" id="inventarioBody">
+                                    <!-- Dados serão carregados via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Hardware Section -->
+                <section id="hardware" class="section">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold mb-4 text-white">Cadastro de Hardware</h2>
+                        <div class="h-1 w-24 bg-blue-500 mx-auto"></div>
+                    </div>
+                    
+                    <div class="glass-effect rounded-xl p-8 max-w-4xl mx-auto">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-semibold text-blue-300">Detalhes do Equipamento</h3>
+                            <div class="flex space-x-2">
+                                <button onclick="adicionarHardware()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center text-sm transition-colors">
+                                    <i class="fas fa-plus mr-2"></i> Novo
+                                </button>
+                                <button class="bg-transparent border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-4 py-2 rounded-md flex items-center text-sm transition-colors">
+                                    <i class="fas fa-sync-alt mr-2"></i> Atualizar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <form class="space-y-6" id="hardwareForm">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="hardware-nome" class="block mb-2 text-sm font-medium text-blue-300">Nome do Hardware</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-desktop text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="hardware-nome" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: Notebook Dell XPS">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="hardware-modelo" class="block mb-2 text-sm font-medium text-blue-300">Modelo</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-tag text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="hardware-modelo" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: XPS 15 9500">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="hardware-serie" class="block mb-2 text-sm font-medium text-blue-300">Número de Série</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-barcode text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="hardware-serie" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: SN12345678">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="hardware-localizacao" class="block mb-2 text-sm font-medium text-blue-300">Localização</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-map-marker-alt text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="hardware-localizacao" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: Sala 302, 3º andar">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="hardware-tipo" class="block mb-2 text-sm font-medium text-blue-300">Tipo</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-laptop text-gray-400"></i>
+                                        </div>
+                                        <select id="hardware-tipo" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500 appearance-none">
+                                            <option value="">Selecione</option>
+                                            <option value="notebook">Notebook</option>
+                                            <option value="desktop">Desktop</option>
+                                            <option value="servidor">Servidor</option>
+                                            <option value="impressora">Impressora</option>
+                                            <option value="outro">Outro</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="hardware-data" class="block mb-2 text-sm font-medium text-blue-300">Data de Aquisição</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-calendar-alt text-gray-400"></i>
+                                        </div>
+                                        <input type="date" id="hardware-data" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="hardware-responsavel" class="block mb-2 text-sm font-medium text-blue-300">Responsável pelo Equipamento</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-user text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="hardware-responsavel" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: João Silva">
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <label class="custom-checkbox flex items-center">
+                                        <input type="checkbox" id="hardware-uso">
+                                        <span class="checkmark"></span>
+                                        <span class="ml-2 text-blue-100">Em uso</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-center pt-4 space-x-4">
+                                <button type="submit" class="action-button px-8 py-3 text-white font-medium rounded-lg flex items-center">
+                                    <i class="fas fa-save mr-2"></i> Salvar
+                                </button>
+                                <button type="button" onclick="limparFormulario('hardwareForm')" class="bg-transparent border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-8 py-3 rounded-lg flex items-center transition-colors">
+                                    <i class="fas fa-times mr-2"></i> Limpar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Recent Hardware Table -->
+                    <div class="glass-effect rounded-xl p-6 mt-8 max-w-4xl mx-auto overflow-x-auto">
+                        <h3 class="text-xl font-semibold text-blue-300 mb-4">Equipamentos Recentes</h3>
+                        <table class="min-w-full divide-y divide-blue-800">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Nome</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Tipo</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Responsável</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-blue-800">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Notebook Dell XPS</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Notebook</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Ana Silva</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Em uso</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Servidor Dell PowerEdge</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Servidor</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Carlos Mendes</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Em uso</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Impressora HP LaserJet</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Impressora</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Depto. Marketing</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Manutenção</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Software Section -->
+                <section id="software" class="section">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold mb-4 text-white">Cadastro de Software</h2>
+                        <div class="h-1 w-24 bg-blue-500 mx-auto"></div>
+                    </div>
+                    
+                    <div class="glass-effect rounded-xl p-8 max-w-4xl mx-auto">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-semibold text-blue-300">Detalhes do Software</h3>
+                            <div class="flex space-x-2">
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center text-sm transition-colors">
+                                    <i class="fas fa-plus mr-2"></i> Novo
+                                </button>
+                                <button class="bg-transparent border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-4 py-2 rounded-md flex items-center text-sm transition-colors">
+                                    <i class="fas fa-sync-alt mr-2"></i> Atualizar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <form class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="software-nome" class="block mb-2 text-sm font-medium text-blue-300">Nome do Software</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-cube text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="software-nome" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: Microsoft Office">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="software-versao" class="block mb-2 text-sm font-medium text-blue-300">Versão</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-code-branch text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="software-versao" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: 365">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="software-tipo" class="block mb-2 text-sm font-medium text-blue-300">Tipo</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-th-large text-gray-400"></i>
+                                        </div>
+                                        <select id="software-tipo" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500 appearance-none">
+                                            <option value="">Selecione</option>
+                                            <option value="erp">ERP</option>
+                                            <option value="bi">BI</option>
+                                            <option value="crm">CRM</option>
+                                            <option value="so">Sistema Operacional</option>
+                                            <option value="outro">Outro</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="software-fornecedor" class="block mb-2 text-sm font-medium text-blue-300">Fornecedor</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-building text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="software-fornecedor" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: Microsoft">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="software-data" class="block mb-2 text-sm font-medium text-blue-300">Data de Instalação</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-calendar-alt text-gray-400"></i>
+                                        </div>
+                                        <input type="date" id="software-data" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="software-responsavel" class="block mb-2 text-sm font-medium text-blue-300">Responsável pela Licença</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-user text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="software-responsavel" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: Depto. TI">
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <label class="custom-checkbox flex items-center">
+                                        <input type="checkbox" id="software-licenca">
+                                        <span class="checkmark"></span>
+                                        <span class="ml-2 text-blue-100">Licença Válida</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-center pt-4 space-x-4">
+                                <button type="button" class="action-button px-8 py-3 text-white font-medium rounded-lg flex items-center">
+                                    <i class="fas fa-search mr-2"></i> Pesquisar
+                                </button>
+                                <button type="button" class="bg-transparent border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-8 py-3 rounded-lg flex items-center transition-colors">
+                                    <i class="fas fa-times mr-2"></i> Limpar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Recent Software Table -->
+                    <div class="glass-effect rounded-xl p-6 mt-8 max-w-4xl mx-auto overflow-x-auto">
+                        <h3 class="text-xl font-semibold text-blue-300 mb-4">Softwares Recentes</h3>
+                        <table class="min-w-full divide-y divide-blue-800">
+                            <thead>
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Nome</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Versão</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Fornecedor</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-blue-800">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Microsoft Office</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">365</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Microsoft</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Licença Válida</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Adobe Creative Cloud</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">2023</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Adobe</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Licença Válida</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">AutoCAD</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">2022</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">Autodesk</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Licença Expirada</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+                
+                <!-- Rede Section -->
+                <section id="rede" class="section">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold mb-4 text-white">Cadastro de Infraestrutura de Rede</h2>
+                        <div class="h-1 w-24 bg-blue-500 mx-auto"></div>
+                    </div>
+                    
+                    <div class="glass-effect rounded-xl p-8 max-w-4xl mx-auto">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-semibold text-blue-300">Detalhes da Rede</h3>
+                            <div class="flex space-x-2">
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center text-sm transition-colors">
+                                    <i class="fas fa-plus mr-2"></i> Novo
+                                </button>
+                                <button class="bg-transparent border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-4 py-2 rounded-md flex items-center text-sm transition-colors">
+                                    <i class="fas fa-sync-alt mr-2"></i> Atualizar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <form class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="rede-tipo" class="block mb-2 text-sm font-medium text-blue-300">Tipo de Rede</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-network-wired text-gray-400"></i>
+                                        </div>
+                                        <select id="rede-tipo" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500 appearance-none">
+                                            <option value="">Selecione</option>
+                                            <option value="lan">LAN</option>
+                                            <option value="wan">WAN</option>
+                                            <option value="vpn">VPN</option>
+                                            <option value="outro">Outro</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="rede-protocolo" class="block mb-2 text-sm font-medium text-blue-300">Protocolo</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-project-diagram text-gray-400"></i>
+                                        </div>
+                                        <select id="rede-protocolo" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500 appearance-none">
+                                            <option value="">Selecione</option>
+                                            <option value="tcp-ip">TCP/IP</option>
+                                            <option value="mpls">MPLS</option>
+                                            <option value="outro">Outro</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="rede-banda" class="block mb-2 text-sm font-medium text-blue-300">Largura de Banda</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-tachometer-alt text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="rede-banda" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: 100 Mbps">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="rede-status" class="block mb-2 text-sm font-medium text-blue-300">Status da Conexão</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-signal text-gray-400"></i>
+                                        </div>
+                                        <select id="rede-status" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500 appearance-none">
+                                            <option value="">Selecione</option>
+                                            <option value="ativo">Ativo</option>
+                                            <option value="inativo">Inativo</option>
+                                            <option value="manutencao">Em Manutenção</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="rede-equipamento" class="block mb-2 text-sm font-medium text-blue-300">Equipamento de Conexão</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-hdd text-gray-400"></i>
+                                        </div>
+                                        <select id="rede-equipamento" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500 appearance-none">
+                                            <option value="">Selecione</option>
+                                            <option value="switch">Switch</option>
+                                            <option value="roteador">Roteador</option>
+                                            <option value="firewall">Firewall</option>
+                                            <option value="outro">Outro</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="rede-ip" class="block mb-2 text-sm font-medium text-blue-300">Endereço IP</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-globe text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="rede-ip" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: 192.168.1.1">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-center pt-4 space-x-4">
+                                <button type="button" class="action-button px-8 py-3 text-white font-medium rounded-lg flex items-center">
+                                    <i class="fas fa-search mr-2"></i> Pesquisar
+                                </button>
+                                <button type="button" class="bg-transparent border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-8 py-3 rounded-lg flex items-center transition-colors">
+                                    <i class="fas fa-times mr-2"></i> Limpar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Network Status -->
+                    <div class="glass-effect rounded-xl p-6 mt-8 max-w-4xl mx-auto">
+                        <h3 class="text-xl font-semibold text-blue-300 mb-4">Status da Rede</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-blue-900 bg-opacity-30 p-4 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-blue-300 text-sm">LAN Principal</p>
+                                        <p class="text-lg font-semibold text-white">Ativo</p>
+                                    </div>
+                                    <div class="h-12 w-12 rounded-full bg-green-500 bg-opacity-20 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <div class="w-full bg-blue-800 rounded-full h-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 95%"></div>
+                                    </div>
+                                    <p class="text-xs text-blue-300 mt-1">Tráfego: 95%</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-900 bg-opacity-30 p-4 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-blue-300 text-sm">VPN Corporativa</p>
+                                        <p class="text-lg font-semibold text-white">Ativo</p>
+                                    </div>
+                                    <div class="h-12 w-12 rounded-full bg-green-500 bg-opacity-20 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <div class="w-full bg-blue-800 rounded-full h-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 78%"></div>
+                                    </div>
+                                    <p class="text-xs text-blue-300 mt-1">Tráfego: 78%</p>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-blue-900 bg-opacity-30 p-4 rounded-lg">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="text-blue-300 text-sm">WAN Filial</p>
+                                        <p class="text-lg font-semibold text-white">Manutenção</p>
+                                    </div>
+                                    <div class="h-12 w-12 rounded-full bg-yellow-500 bg-opacity-20 flex items-center justify-center">
+                                        <i class="fas fa-exclamation-triangle text-yellow-500 text-xl"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <div class="w-full bg-blue-800 rounded-full h-2">
+                                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 45%"></div>
+                                    </div>
+                                    <p class="text-xs text-blue-300 mt-1">Tráfego: 45%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Banco de Dados Section -->
+                <section id="banco" class="section">
+                    <div class="text-center mb-8">
+                        <h2 class="text-3xl font-bold mb-4 text-white">Cadastro de Banco de Dados</h2>
+                        <div class="h-1 w-24 bg-blue-500 mx-auto"></div>
+                    </div>
+                    
+                    <div class="glass-effect rounded-xl p-8 max-w-4xl mx-auto">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-semibold text-blue-300">Detalhes do Banco de Dados</h3>
+                            <div class="flex space-x-2">
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center text-sm transition-colors">
+                                    <i class="fas fa-plus mr-2"></i> Novo
+                                </button>
+                                <button class="bg-transparent border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-4 py-2 rounded-md flex items-center text-sm transition-colors">
+                                    <i class="fas fa-sync-alt mr-2"></i> Atualizar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <form class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="banco-nome" class="block mb-2 text-sm font-medium text-blue-300">Nome do Banco de Dados</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-database text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="banco-nome" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: db_producao">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="banco-tipo" class="block mb-2 text-sm font-medium text-blue-300">Tipo</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-table text-gray-400"></i>
+                                        </div>
+                                        <select id="banco-tipo" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500 appearance-none">
+                                            <option value="">Selecione</option>
+                                            <option value="relacional">Relacional</option>
+                                            <option value="nosql">NoSQL</option>
+                                            <option value="outro">Outro</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="banco-versao" class="block mb-2 text-sm font-medium text-blue-300">Versão</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-code-branch text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="banco-versao" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: 8.0.26">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="banco-servidor" class="block mb-2 text-sm font-medium text-blue-300">Servidor Hospedeiro</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-server text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="banco-servidor" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: srv-db01">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="banco-porta" class="block mb-2 text-sm font-medium text-blue-300">Porta de Conexão</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-plug text-gray-400"></i>
+                                        </div>
+                                        <input type="text" id="banco-porta" class="form-input bg-blue-900 bg-opacity-30 text-white pl-10 pr-4 py-3 rounded-lg w-full focus:ring-2 focus:ring-blue-500" placeholder="Ex: 3306">
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center">
+                                    <label class="custom-checkbox flex items-center">
+                                        <input type="checkbox" id="banco-execucao">
+                                        <span class="checkmark"></span>
+                                        <span class="ml-2 text-blue-100">Em Execução</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-center pt-4 space-x-4">
+                                <button type="button" class="action-button px-8 py-3 text-white font-medium rounded-lg flex items-center">
+                                    <i class="fas fa-search mr-2"></i> Pesquisar
+                                </button>
+                                <button type="button" class="bg-transparent border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-8 py-3 rounded-lg flex items-center transition-colors">
+                                    <i class="fas fa-times mr-2"></i> Limpar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Database Status -->
+                    <div class="glass-effect rounded-xl p-6 mt-8 max-w-4xl mx-auto">
+                        <h3 class="text-xl font-semibold text-blue-300 mb-4">Status dos Bancos de Dados</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-blue-800">
+                                <thead>
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Nome</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Tipo</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Servidor</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-blue-300 uppercase tracking-wider">Uso</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-blue-800">
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">db_producao</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">MySQL</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">srv-db01</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Em Execução</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="w-full bg-blue-800 rounded-full h-2">
+                                                <div class="bg-blue-500 h-2 rounded-full" style="width: 65%"></div>
+                                            </div>
+                                            <span class="text-xs text-blue-300">65%</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">db_analytics</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">MongoDB</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">srv-db02</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Em Execução</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="w-full bg-blue-800 rounded-full h-2">
+                                                <div class="bg-blue-500 h-2 rounded-full" style="width: 82%"></div>
+                                            </div>
+                                            <span class="text-xs text-blue-300">82%</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">db_backup</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">PostgreSQL</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">srv-db03</td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Parado</span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="w-full bg-blue-800 rounded-full h-2">
+                                                <div class="bg-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                                            </div>
+                                            <span class="text-xs text-blue-300">0%</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+        
+        <footer class="bg-blue-900 bg-opacity-50 p-6 text-center text-white mt-auto">
+            <div class="container mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <p class="text-blue-300 text-sm">Sistema desenvolvido em parceria com a</p>
+                        <p class="text-white font-medium">Fábrica de Software – Grupo Atitude</p>
+                    </div>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-blue-300 hover:text-white transition-colors">
+                            <i class="fas fa-question-circle"></i> Ajuda
+                        </a>
+                        <a href="#" class="text-blue-300 hover:text-white transition-colors">
+                            <i class="fas fa-file-alt"></i> Documentação
+                        </a>
+                        <a href="#" class="text-blue-300 hover:text-white transition-colors">
+                            <i class="fas fa-envelope"></i> Contato
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // Dados do sistema (simulação de banco de dados)
+        let currentUser = '';
+        let userType = '';
+        
+        // Base de dados dos ativos
+        let inventarioData = [
+            // Hardware
+            { tipo: 'hardware', nome: 'Notebook Dell XPS', modelo: 'XPS 15 9500', responsavel: 'Ana Silva', status: 'ativo', localizacao: 'Sala 301' },
+            { tipo: 'hardware', nome: 'Servidor Dell PowerEdge', modelo: 'R740', responsavel: 'Carlos Mendes', status: 'ativo', localizacao: 'Data Center' },
+            { tipo: 'hardware', nome: 'Impressora HP LaserJet', modelo: 'Pro M404n', responsavel: 'Depto. Marketing', status: 'manutencao', localizacao: 'Sala 205' },
+            
+            // Software
+            { tipo: 'software', nome: 'Microsoft Office', modelo: '365', responsavel: 'Depto. TI', status: 'ativo', localizacao: 'Licença Corporativa' },
+            { tipo: 'software', nome: 'Adobe Creative Cloud', modelo: '2023', responsavel: 'Depto. Marketing', status: 'ativo', localizacao: 'Licença Corporativa' },
+            { tipo: 'software', nome: 'AutoCAD', modelo: '2022', responsavel: 'Depto. Engenharia', status: 'inativo', localizacao: 'Licença Expirada' },
+            
+            // Rede
+            { tipo: 'rede', nome: 'LAN Principal', modelo: 'TCP/IP', responsavel: 'Depto. TI', status: 'ativo', localizacao: 'Prédio Principal' },
+            { tipo: 'rede', nome: 'VPN Corporativa', modelo: 'OpenVPN', responsavel: 'Depto. TI', status: 'ativo', localizacao: 'Cloud AWS' },
+            { tipo: 'rede', nome: 'WAN Filial', modelo: 'MPLS', responsavel: 'Depto. TI', status: 'manutencao', localizacao: 'Filial São Paulo' },
+            
+            // Banco de Dados
+            { tipo: 'banco', nome: 'db_producao', modelo: 'MySQL 8.0', responsavel: 'Depto. TI', status: 'ativo', localizacao: 'srv-db01' },
+            { tipo: 'banco', nome: 'db_analytics', modelo: 'MongoDB 5.0', responsavel: 'Depto. TI', status: 'ativo', localizacao: 'srv-db02' },
+            { tipo: 'banco', nome: 'db_backup', modelo: 'PostgreSQL 13', responsavel: 'Depto. TI', status: 'inativo', localizacao: 'srv-db03' }
+        ];
+
+        // Usuários válidos
+        const validUsers = {
+            'admin': { password: 'admin123', type: 'admin', name: 'Administrador' },
+            'user': { password: 'user123', type: 'user', name: 'Usuário' }
+        };
+
+        // Set current date
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-BR');
+        
+        // Login functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (validUsers[username] && validUsers[username].password === password) {
+                // Login bem-sucedido
+                currentUser = validUsers[username].name;
+                userType = validUsers[username].type;
+                
+                document.getElementById('currentUser').textContent = currentUser;
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('mainApp').classList.add('active');
+                
+                // Carregar dados do inventário
+                carregarInventario();
+                atualizarContadores();
+            } else {
+                // Login falhou
+                showError('Usuário ou senha inválidos!');
+            }
+        });
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function logout() {
+            if (confirm('Tem certeza que deseja sair?')) {
+                document.getElementById('loginContainer').style.display = 'flex';
+                document.getElementById('mainApp').classList.remove('active');
+                
+                // Limpar campos de login
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+                
+                currentUser = '';
+                userType = '';
+            }
+        }
+
+        function mostrarSecao(secao) {
+            // Remove active class from all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Add active class to selected section
+            document.getElementById(secao).classList.add('active');
+            
+            // Update navigation buttons
+            const buttons = document.querySelectorAll('.nav-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Find the button that was clicked and add active class
+            const clickedButton = Array.from(buttons).find(button => {
+                return button.textContent.toLowerCase().includes(secao) || 
+                       (secao === 'home' && button.textContent.toLowerCase().includes('home'));
+            });
+            
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            }
+
+            // Se for a seção de inventário, carregar dados
+            if (secao === 'inventario') {
+                carregarInventario();
+            }
+        }
+
+        function carregarInventario() {
+            const tbody = document.getElementById('inventarioBody');
+            tbody.innerHTML = '';
+            
+            inventarioData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTipoColor(item.tipo)}">
+                            ${getTipoIcon(item.tipo)} ${item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">${item.nome}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">${item.modelo}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">${item.responsavel}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(item.status)}">
+                            ${getStatusText(item.status)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">${item.localizacao}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getTipoColor(tipo) {
+            switch(tipo) {
+                case 'hardware': return 'bg-blue-100 text-blue-800';
+                case 'software': return 'bg-green-100 text-green-800';
+                case 'rede': return 'bg-purple-100 text-purple-800';
+                case 'banco': return 'bg-orange-100 text-orange-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        function getTipoIcon(tipo) {
+            switch(tipo) {
+                case 'hardware': return '<i class="fas fa-laptop mr-1"></i>';
+                case 'software': return '<i class="fas fa-code mr-1"></i>';
+                case 'rede': return '<i class="fas fa-network-wired mr-1"></i>';
+                case 'banco': return '<i class="fas fa-database mr-1"></i>';
+                default: return '<i class="fas fa-cube mr-1"></i>';
+            }
+        }
+
+        function getStatusColor(status) {
+            switch(status) {
+                case 'ativo': return 'bg-green-100 text-green-800';
+                case 'inativo': return 'bg-red-100 text-red-800';
+                case 'manutencao': return 'bg-yellow-100 text-yellow-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        function getStatusText(status) {
+            switch(status) {
+                case 'ativo': return 'Ativo';
+                case 'inativo': return 'Inativo';
+                case 'manutencao': return 'Manutenção';
+                default: return 'Desconhecido';
+            }
+        }
+
+        function filtrarInventario() {
+            const tipoFiltro = document.getElementById('filtroTipo').value;
+            const statusFiltro = document.getElementById('filtroStatus').value;
+            const responsavelFiltro = document.getElementById('filtroResponsavel').value.toLowerCase();
+
+            let dadosFiltrados = inventarioData;
+
+            if (tipoFiltro) {
+                dadosFiltrados = dadosFiltrados.filter(item => item.tipo === tipoFiltro);
+            }
+
+            if (statusFiltro) {
+                dadosFiltrados = dadosFiltrados.filter(item => item.status === statusFiltro);
+            }
+
+            if (responsavelFiltro) {
+                dadosFiltrados = dadosFiltrados.filter(item => 
+                    item.responsavel.toLowerCase().includes(responsavelFiltro)
+                );
+            }
+
+            const tbody = document.getElementById('inventarioBody');
+            tbody.innerHTML = '';
+            
+            dadosFiltrados.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getTipoColor(item.tipo)}">
+                            ${getTipoIcon(item.tipo)} ${item.tipo.charAt(0).toUpperCase() + item.tipo.slice(1)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">${item.nome}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">${item.modelo}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">${item.responsavel}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(item.status)}">
+                            ${getStatusText(item.status)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">${item.localizacao}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function exportarInventario() {
+            // Simular exportação para CSV
+            let csv = 'Tipo,Nome,Modelo/Versão,Responsável,Status,Localização\n';
+            
+            inventarioData.forEach(item => {
+                csv += `${item.tipo},${item.nome},${item.modelo},${item.responsavel},${item.status},${item.localizacao}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'inventario_ativos.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            alert('Inventário exportado com sucesso!');
+        }
+
+        function atualizarInventario() {
+            carregarInventario();
+            atualizarContadores();
+            alert('Inventário atualizado com sucesso!');
+        }
+
+        function atualizarContadores() {
+            const hardware = inventarioData.filter(item => item.tipo === 'hardware').length;
+            const software = inventarioData.filter(item => item.tipo === 'software').length;
+            const rede = inventarioData.filter(item => item.tipo === 'rede').length;
+            const banco = inventarioData.filter(item => item.tipo === 'banco').length;
+
+            document.getElementById('totalHardware').textContent = hardware;
+            document.getElementById('totalSoftware').textContent = software;
+            document.getElementById('totalRede').textContent = rede;
+            document.getElementById('totalBanco').textContent = banco;
+        }
+
+        function adicionarHardware() {
+            if (userType !== 'admin') {
+                alert('Apenas administradores podem adicionar novos ativos.');
+                return;
+            }
+            // Aqui você implementaria a lógica para adicionar hardware
+            alert('Funcionalidade de adicionar hardware em desenvolvimento.');
+        }
+
+        function limparFormulario(formId) {
+            document.getElementById(formId).reset();
+        }
+
+        // Funcionalidade do formulário de hardware
+        document.getElementById('hardwareForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (userType !== 'admin') {
+                alert('Apenas administradores podem adicionar novos ativos.');
+                return;
+            }
+
+            const nome = document.getElementById('hardware-nome').value;
+            const modelo = document.getElementById('hardware-modelo').value;
+            const responsavel = document.getElementById('hardware-responsavel').value;
+            const localizacao = document.getElementById('hardware-localizacao').value;
+            const uso = document.getElementById('hardware-uso').checked;
+
+            if (!nome || !modelo || !responsavel) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+
+            // Adicionar ao inventário
+            const novoItem = {
+                tipo: 'hardware',
+                nome: nome,
+                modelo: modelo,
+                responsavel: responsavel,
+                status: uso ? 'ativo' : 'inativo',
+                localizacao: localizacao || 'Não informado'
+            };
+
+            inventarioData.push(novoItem);
+            atualizarContadores();
+            
+            alert('Hardware adicionado com sucesso!');
+            limparFormulario('hardwareForm');
+        });
+
+        // Inicialização quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            // Definir data atual
+            document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-BR');
+            
+            // Focar no campo de usuário
+            document.getElementById('username').focus();
+        });
+    </script>
+</body>
+</html>
